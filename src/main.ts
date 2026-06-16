@@ -49,7 +49,11 @@ client.on(Events.MessageCreate, async (message) => {
     const userId = message.author.id;
     counter.set(userId, (counter.get(userId) ?? 0) + 1);
 
-    await message.delete();
+    try {
+      await message.delete();
+    } catch {
+      console.error('failed to delete message');
+    }
 
     const logChannel = await client.channels.fetch(env.LOG_CHANNEL_ID);
     if (!logChannel?.isTextBased() || !logChannel.isSendable()) return;
@@ -57,7 +61,8 @@ client.on(Events.MessageCreate, async (message) => {
     const embed = new EmbedBuilder()
       .setColor('Yellow')
       .setAuthor({ name: message.author.username, iconURL: message.author.displayAvatarURL() })
-      .setTitle('怪しい画像付きメッセージを検知');
+      .setDescription('怪しい画像付きメッセージを検知')
+      .setFooter({ text: `スコア: ${totalScore}/${SCORE_THRESHOLD} | 連続検知数: ${counter.get(userId) ?? 0}` });
 
     await logChannel.send({
       embeds: [embed],
