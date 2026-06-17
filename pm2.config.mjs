@@ -2,7 +2,7 @@ export const apps = [
   {
     name: process.env.PM2_APP_NAME || 'anti-image-spam',
     interpreter: 'bun',
-    interpreter_args: '--bun',
+    interpreter_args: '--bun --smol',
     script: 'pm2-wrapper.js',
     env: {
       NODE_ENV: "production",
